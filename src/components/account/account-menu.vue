@@ -23,7 +23,11 @@
                 <p v-show="isVisible"><router-link to="/users/setting" class="custom-link">ตั้งค่าบัญชี</router-link>
                 </p>
             </div>
-            
+            <div class="item">
+                <font-awesome-icon :icon="['fas', 'gear']"  class="icons" v-show="isVisible"/>
+                <p v-show="isVisible"><router-link to="/historyBill" class="custom-link">ดูประวัติใบเสร็จชำระเงิน</router-link>
+                </p>
+            </div>
            
             
         </div>
@@ -153,7 +157,7 @@ export default {
     display: flex;
     flex-direction: column;
     /* gap: 0.2rem; */
-    height: 240px;
+    height: 280px;
 }
 .seller{
     display: flex;

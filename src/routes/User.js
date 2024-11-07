@@ -90,6 +90,24 @@ router.get('/recipes', async (req, res) => {
         res.status(500).send('เกิดข้อผิดพลาดในการดึงข้อมูลจากตะกร้า');
     }
 });
+router.get('/recipesAll', async (req, res) => {
+    const { email } = req.query;
+    if (!email) {
+        return res.status(400).send('ไม่มี email');
+    }
+    try {
+        const recipe = await recipes.findAll({
+            where: { email },
+        });
+        if (!recipe) {
+            return res.status(404).send('ไม่พบข้อมูล');    }
+
+        res.status(200).json(recipe);
+    } catch (error) {
+        console.error('เกิดข้อผิดพลาดในการดึงข้อมูลจากตะกร้า:', error);
+        res.status(500).send('เกิดข้อผิดพลาดในการดึงข้อมูลจากตะกร้า');
+    }
+});
 router.put('/address', async (req, res) => {
     const { name, district, postalCode, province, address, email, number } = req.body;
 
@@ -161,14 +179,14 @@ router.delete('/register', async (req, res) => {
     }
 });
 router.post('/register', async (req, res) => {
-    const { name, email, password, ConfirmPassword, role } = req.body;
+    const { name, email, password,  role } = req.body;
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = await User.create({
             name,
             email,
             password: hashedPassword,
-            ConfirmPassword,
+            // ConfirmPassword,
             role,
             isConfirmed: false
         });
@@ -249,13 +267,13 @@ router.put('/address', async (req, res) => {
     }
 });
 router.put('/updatepassword', async (req, res) => {
-    const { email, password, confirmPassword } = req.body;
+    const { email, password,  } = req.body;
     try {
         const user = await User.findOne({ where: { email } });
         const hashedPassword = await bcrypt.hash(password, 10);
-        const hashedconfirmPassword = await bcrypt.hash(confirmPassword, 10);
+        // const hashedconfirmPassword = await bcrypt.hash(confirmPassword, 10);
         user.password = hashedPassword;
-        user.ConfirmPassword = hashedconfirmPassword;
+        // user.ConfirmPassword = hashedconfirmPassword;
         await user.save();
         res.status(200).json({ message: "Password updated successfully" });
     } catch (error) {

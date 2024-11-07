@@ -10,7 +10,7 @@ const User = sequelize.define('User', {
     name: { type: DataTypes.STRING },
     email: { type: DataTypes.STRING, allowNull: false, unique: true },
     password: { type: DataTypes.STRING, allowNull: false },
-    ConfirmPassword: { type: DataTypes.STRING, allowNull: false },
+    // ConfirmPassword: { type: DataTypes.STRING, allowNull: false },
     role: { type: DataTypes.STRING, allowNull: false, defaultValue: "user" },
     gender: { type: DataTypes.STRING, allowNull: true },
     date: { type: DataTypes.STRING, allowNull: true },
@@ -535,6 +535,7 @@ const comment = sequelize.define('comment', {
     },
     AcName: { type: DataTypes.STRING, allowNull: true },
 });
+
 // Shop.hasMany(ProductTest, { foreignKey: 'shopId', sourceKey: 'shopId' });
 // ProductTest.belongsTo(Shop, { foreignKey: 'shopId', targetKey: 'shopId' });
 module.exports = { sequelize, User, Follow,OrderHistory, recipes,ProductTestOrder, Product, ProductLikes, historySeller, Shop, Selling, ProductTest, history, cart, Payment, seller, location, account, comment };

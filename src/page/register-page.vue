@@ -36,6 +36,11 @@
                 <button type="submit" class="submit-btn">Register</button>
             </form>
         </div>
+        <div class="pagination">
+            <button @click="loadPreviousPage" :disabled="currentPage === 1">ก่อนหน้า</button>
+            <span>หน้า {{ currentPage }} จาก {{ totalPages }}</span>
+            <button @click="loadNextPage" :disabled="currentPage === totalPages">ถัดไป</button>
+        </div>
     </div>
 </template>
 
@@ -51,7 +56,9 @@ export default {
             messages: {
                 error: [],
                 success_msg: ''
-            }
+            },
+            currentPage: 1,
+            totalPages: 1,
         };
     },
     methods: {
@@ -74,7 +81,7 @@ export default {
                 name: this.name,
                 email: this.email,
                 password: this.password,
-                ConfirmPassword: this.ConfirmPassword
+                // ConfirmPassword: this.ConfirmPassword
             })
                 .then(response => {
                     console.log(response.data);

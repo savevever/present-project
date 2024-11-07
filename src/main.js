@@ -39,9 +39,14 @@ import ProductCatrgory from '@/components/homepage/Product-Catrgory.vue';
 import OrderHistory from './page/order-history.vue';
 import AddressSeller from './page/AddressSeller.vue';
 import receiptComponent from './page/receipt-component.vue';
+import historyBill from './page/history-bill.vue';
 library.add(fas, faGoogle);
 const routes = [
     {
+        path: '/historyBill',
+        name: 'historyBill',
+        component: historyBill
+    },{
         path: '/receiptComponent',
         name: 'receiptComponent',
         component: receiptComponent
