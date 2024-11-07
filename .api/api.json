@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "apis": [
+    {
+      "identifier": "developers-2c2p-com",
+      "source": "@developers-2c2p-com/v4.3.0#a74bmalew8pg3j",
+      "integrity": "sha512-bbtRNA+4n/MjEKHDw6OwJ9AMvAcVnK5ARcsEOTzs4KxPmyHOp4v/Wpj2sgCfHn+IeIl46ezaX3dJQyDaSEKEMA==",
+      "installerVersion": "6.1.2"
+    }
+  ]
+}
