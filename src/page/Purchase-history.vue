@@ -12,6 +12,7 @@
                             <div class="items">
                                 <input type="checkbox" v-model="product.checkbox" class="checked"
                                     @change="setSelectItem(product)" />
+
                                 <img :src="product.image" alt="" style="width: 70px; height: 70px; object-fit: cover" />
                                 <div class="item-1">
                                     <p>
@@ -23,13 +24,13 @@
                                         </p>
                                         <p>x {{ product.quantity }}</p>
                                     </div>
-                                    
+
                                 </div>
                                 <!-- <p>x {{ product.quantity }}</p> -->
                                 <div class="item-2">
                                     <router-link :to="{
                                         path: '/selling/reviewPage',
-                                        query: { productId: product.productId,historyId: product.Historyid },
+                                        query: { productId: product.productId, historyId: product.Historyid },
                                     }"><button v-if="commentsExist[product.Historyid]">ให้คะเเนน</button></router-link>
                                     <p>{{ calculateLinePrice(product).toFixed(2) }} บาท</p>
                                     <!-- <p>{{ product.calculateLinePrice}} บาท</p>  -->
@@ -38,7 +39,7 @@
                         </div>
                         <div class="item-button">
                             <button @click="handleClick">สั่งซื้ออีกครั้ง</button>
-                            <button @click="cancelOrder">ลบรายการสินค้า</button>
+                            <!-- <button @click="cancelOrder">ลบรายการสินค้า</button> -->
                         </div>
                     </div>
                 </div>
@@ -57,7 +58,7 @@ export default {
         return {
             history: [],
             currentPage: 1,
-            Historyid:'',
+            Historyid: '',
             itemsPerPage: 12,
             totalItems: 0,
             shops: [],
@@ -80,7 +81,7 @@ export default {
     methods: {
         handleClick() {
             this.addToHistoryClicked();
-            this.payment();
+            //     this.payment();
         },
         payment() {
             const selectedIds = this.selectedItems.map((product) => product.id);
@@ -131,12 +132,11 @@ export default {
         addToHistoryClicked() {
             if (this.selectedItems.length > 0) {
                 this.selectedItems.forEach((product) => {
-                    // const calculatedPrice = this.calculateLinePrice(product).toFixed(2);
-                    
+                    const calculatedPrice = this.calculateLinePrice2(product).toFixed(2);
                     const productData = {
                         productId: product.productId,
                         nameProduct: product.nameProduct,
-                        price: product.price,
+                        price: calculatedPrice,
                         quantity: product.quantity,
                         image: product.image,
                         email: product.email,
@@ -146,31 +146,21 @@ export default {
 
                     console.log("Product Data for History:", productData);
 
-                    axios
-                        .put(
-                            `http://localhost:8081/selling/updateProduct/${productData.productId}`,
-                            {
-                                totalSell: parseInt(productData.quantity),
-                                totalPrice:
-                                    parseFloat(productData.price) * parseInt(productData.quantity),
-                            }
-                        )
-                        .then((response) => {
-                            console.log("Product added to history:", response.data);
-                        })
-                        .catch((error) => {
-                            console.error("Error details:", error.response.data);
-                        });
+                    axios;
                     axios
                         .post(
-                            "http://localhost:8081/products/createHistoryEntry",
+                            "http://localhost:8081/products/ProductTestOrder",
                             productData
                         )
                         .then((response) => {
                             console.log("Product added to history:", response.data);
+                            window.location.href = "http://localhost:8080/AddressSeller";
                         })
                         .catch((error) => {
-                            console.error("Error details:", error.response.data);
+                            console.error(
+                                "Error details:",
+                                error.response ? error.response.data : error
+                            );
                         });
                 });
             }
@@ -189,8 +179,9 @@ export default {
             return 0;
         },
         calculateLinePrice(product) {
-            console.log("product.price",product.price);
-            return product.price * product.quantity;
+            return product.price;
+        },calculateLinePrice2(product) {
+            return product.price /product.quantity ;
         },
         filteredProducts(shopId) {
             return this.products.filter((product) => product.shopId === shopId);
@@ -210,7 +201,7 @@ export default {
                     "http://localhost:8081/products/getHistory"
                 );
                 const allHistory = response.data;
-                
+
                 this.history = allHistory.filter((entry) => entry.email === userEmail);
                 this.totalItems = this.history.length;
             } catch (error) {
@@ -275,7 +266,7 @@ export default {
 
                 this.filteredComments = response.data.filter(comment => comment.email === this.userEmail());
                 // console.log("this.products",this.products);
-                
+
                 this.products.forEach(product => {
                     const hasComment = this.filteredComments.some(comment => comment.historyId === product.Historyid);
                     this.commentsExist[product.Historyid] = !hasComment;
@@ -288,14 +279,14 @@ export default {
         async checkCommentsForProducts() {
             for (const product of this.products) {
                 // console.log("product.Historyid",product.Historyid);
-                
+
                 await this.getComments(product.Historyid);
             }
         },
         async getShops() {
             try {
                 const response = await axios.get("http://localhost:8081/shop/shops");
-                const fetchedShops = response.data.data; 
+                const fetchedShops = response.data.data;
 
                 const uniqueShopIds = [
                     ...new Set(this.products.map((product) => product.shopId)),
@@ -329,8 +320,10 @@ export default {
         },
         setSelectItem(product) {
             if (product.checkbox) {
+                // ถ้าถูกเลือก เพิ่มสินค้าเข้าไปใน selectedItems
                 this.selectedItems.push(product);
             } else {
+                // ถ้าถูกยกเลิกการเลือก เอาสินค้าออกจาก selectedItems
                 const index = this.selectedItems.findIndex(
                     (item) => item.id === product.id
                 );
@@ -373,7 +366,7 @@ export default {
     width: 100%;
     overflow: hidden;
     margin-top: 2rem;
-    
+
 }
 
 #Purchase-history-container {

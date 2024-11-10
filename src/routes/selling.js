@@ -110,6 +110,52 @@ router.post('/users/FormOneSeller', (req, res) => {
 //     }
 // });
 
+// router.post('/createSeller', async (req, res) => {
+//     try {
+//         console.log('Request body:', req.body); 
+
+//         // สร้างผู้ขายใหม่ในฐานข้อมูล
+//         const newSeller = await seller.create({
+//             shopName: req.body.shopName,
+//             email: req.body.email,
+//             phoneNumber: req.body.phoneNumber,
+//             sellerType: req.body.sellerType,
+//             prefix: req.body.prefix,
+//             otherPrefix: req.body.otherPrefix,
+//             firstName: req.body.firstName,
+//             lastName: req.body.lastName,
+//             idCardNumber: req.body.idCardNumber,
+//             birthDay: req.body.birthDay,
+//             province: req.body.province,
+//             amphoe: req.body.amphoe,
+//             district: req.body.district,
+//             zipcode: req.body.zipcode,
+//             addressDetail: req.body.addressDetails,
+//             idCardImages: req.body.idCardImages,
+//             pairIdCardImages: req.body.pairIdCardImages,
+
+//             // ข้อมูลเกี่ยวกับ Corporate
+//             corporateType: req.body.corporateType,
+//             corporateName: req.body.corporateName,
+//             corporateRegistrationNumber: req.body.corporateRegistrationNumber,
+//             provinceCorporate: req.body.provinceCorporate,
+//             amphoeCorporate: req.body.amphoeCorporate,
+//             districtCorporate: req.body.districtCorporate,
+//             zipcodeCorporate: req.body.zipcodeCorporate,
+//             detailsCorporate: req.body.detailsCorporate,
+//             companyCertificateImages: req.body.companyCertificateImages,
+//             directorIdCardImages: req.body.directorIdCardImages,
+//             VAT: req.body.VAT,
+//             office: req.body.office,
+//             VATImages: req.body.VATImages,
+//         });
+
+//         res.status(201).json({ message: 'Seller created successfully', data: newSeller });
+//     } catch (error) {
+//         console.error('Error details:', error);
+//         res.status(500).json({ message: 'Failed to create seller', error: error.message });
+//     }
+// });
 router.post('/createSeller', async (req, res) => {
     try {
         console.log('Request body:', req.body); // ตรวจสอบข้อมูลที่ส่งมาจาก client
@@ -130,7 +176,7 @@ router.post('/createSeller', async (req, res) => {
             amphoe: req.body.amphoe,
             district: req.body.district,
             zipcode: req.body.zipcode,
-            addressDetail: req.body.addressDetails,
+            addressDetail: req.body.addressDetail,
             idCardImages: req.body.idCardImages,
             pairIdCardImages: req.body.pairIdCardImages,
 
@@ -191,6 +237,19 @@ router.get('/view-data', async (req, res) => {
         res.status(500).json({ message: 'Failed to retrieve data', error: error.message });
     }
 });
+
+// Endpoint to view data
+// router.get('/view-data', async (req, res) => {
+//     try {
+//         // Retrieve all data from the Selling table
+//         const allSellings = await seller.findAll();
+
+//         res.status(200).json({ message: 'Data retrieved successfully', data: allSellings });
+//     } catch (error) {
+//         console.error('Error retrieving data:', error);
+//         res.status(500).json({ message: 'Failed to retrieve data', error: error.message });
+//     }
+// });
 
 router.delete('/view-data', async (req, res) => {
     try {

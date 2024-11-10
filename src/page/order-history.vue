@@ -27,9 +27,10 @@
                     <div v-for="product in filteredAndSortedHistory" :key="product.productId" class="item">
                         <div class="line"></div>
                         <div class="items">
-                            <input type="checkbox" v-model="product.checkbox" class="checked"
-                                @change="setSelectItem(product)">
-                            <img :src="product.image" alt="" style="width: 50px; height: 50px; object-fit: cover;">
+                            <!-- <input type="checkbox" v-model="product.checkbox" class="checked"
+                                @change="setSelectItem(product)"> -->
+                            <img :src="product.image" alt=""
+                                style="width: 50px; height: 50px; object-fit: cover; margin-right: 20px;">
                             <div class="item-1">
                                 <p><span>{{ product.nameProduct }}</span></p>
                             </div>
@@ -39,13 +40,16 @@
                                 <p>{{ calculateLinePrice(product).toFixed(2) }} บาท</p>
                                 <p><span>{{ new Date(product.createdAt).toLocaleString('th-TH') }}</span></p>
                             </div>
+                            <div class="item-3">
+                                <p>ดูใบบิล</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="item-button">
-                    <!-- <button @click="handleClick">สั่งซื้ออีกครั้ง</button> -->
+                <!-- <div class="item-button">
+                    <button @click="handleClick">สั่งซื้ออีกครั้ง</button>
                     <button @click="cancelOrder">ลบรายการประวัติสินค้า</button>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
@@ -68,8 +72,8 @@ export default {
             shopId: "",
             sortOrder: 'desc',
             searchProduct: '',
-            startDate: '',  
-            endDate: '',   
+            startDate: '',
+            endDate: '',
             // selectedItems: [],
         };
     },
@@ -77,37 +81,56 @@ export default {
         filteredAndSortedHistory() {
             let filteredHistory = this.history;
 
-            // กรองสินค้าตามชื่อที่เลือก
+            // Log initial history data
+            console.log("Initial history data:", this.history);
+
+            // Filter by shopId and log the result
+            if (this.shopId) {
+                filteredHistory = filteredHistory.filter(
+                    product => product.shopId === this.shopId
+                );
+                console.log("After shopId filter:", filteredHistory);
+            }
+
+            // Filter by selected product name and log the result
             if (this.searchProduct) {
                 filteredHistory = filteredHistory.filter(
                     product => product.nameProduct === this.searchProduct
                 );
+                console.log("After searchProduct filter:", filteredHistory);
             }
 
-            // กรองสินค้าตามวันที่เริ่มต้นและวันที่สิ้นสุด
+            // Filter by start date and log the result
             if (this.startDate) {
                 const start = new Date(this.startDate);
                 filteredHistory = filteredHistory.filter(
                     product => new Date(product.createdAt) >= start
                 );
+                console.log("After startDate filter:", filteredHistory);
             }
+
+            // Filter by end date and log the result
             if (this.endDate) {
                 const end = new Date(this.endDate);
                 filteredHistory = filteredHistory.filter(
                     product => new Date(product.createdAt) <= end
                 );
+                console.log("After endDate filter:", filteredHistory);
             }
 
-            // เรียงลำดับตามวันที่
-            return filteredHistory.slice().sort((a, b) => {
+            // Sort the filtered result by createdAt date and log the result
+            const sortedHistory = filteredHistory.slice().sort((a, b) => {
                 const dateA = new Date(a.createdAt);
                 const dateB = new Date(b.createdAt);
                 return this.sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
             });
+            console.log("After sorting:", sortedHistory);
+
+            return sortedHistory;
         },
         uniqueProductNames() {
             const names = this.products.map(product => product.nameProduct);
-            return [...new Set(names)]; // กำจัดชื่อที่ซ้ำออก
+            return [...new Set(names)];
         },
         filteredHistory() {
             if (this.searchProduct) {
@@ -143,10 +166,37 @@ export default {
             return 0;
         },
         calculateLinePrice(product) {
-            return product.price * product.quantity;
+            return product.price;
         },
         filteredProducts(shopId) {
             return this.products.filter(product => product.shopId === shopId);
+        }, async fetchShopDetails() {
+            try {
+                const response = await axios.get('http://localhost:8081/shop/shops');
+                const shops = response.data.data || [];
+                const shop = shops.find(shop => shop.email === this.userEmail);
+                console.log(shop.createdAt);
+                if (shop) {
+                    this.shopName = shop.shopName;
+                    this.shopId = shop.shopId;
+                    this.createdAt = new Date(shop.createdAt).toLocaleDateString('th-TH', { day: '2-digit', month: 'long', year: 'numeric' });
+                    this.followerCount = shop.follow;
+                    this.filteredProducts = this.products.filter(product => product.shopId === this.shopId);
+                    console.log("this.filteredProducts", this.filteredProducts);
+
+                    if (shop.image) {
+                        this.images.push({
+                            id: `image${this.nextImageId++}`,
+                            src: shop.image,
+                        });
+                    }
+                } else {
+                    console.error('Shop not found');
+                }
+
+            } catch (error) {
+                console.error('Error fetching shop details:', error);
+            }
         },
         async loadHistory() {
             try {

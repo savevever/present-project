@@ -22,10 +22,11 @@
                     <p> {{ this.addressname }} </p>
                     <p> {{ this.addressaddress }} อ.{{ this.addressdistrict }} จ.{{ this.addressprovince }}</p>
                     <p>{{ this.addresspostalCode }} </p>
+                    <p>{{ this.addressnumber }} </p>
                 </div>
             </div>
             <div class="itemRight">
-                <h2>ใบกำกับภาษี/ใบเสร็จรับเงิน</h2>
+                <h2 style="color: #0167d4;">ใบกำกับภาษี/ใบเสร็จรับเงิน</h2>
                 <div class="seller2">
                     <div v-for="shop in paymentfilter" :key="shop.id">
                         <p><strong>เลขที่ </strong>{{ shop.recipesid }}</p><span></span>
@@ -84,18 +85,18 @@
                 <div class="item-2">
                     <div class="item">
                         <!-- <p>ราคาต่อหน่วย</p> -->
-                        <span>{{ product.price }}</span>
+                        <span style="margin-left: 50px;">{{ product.price }}</span>
                     </div>
                     <div class="item">
                         <!-- <p>จำนวน</p> -->
-                        <span>{{ product.quantity }}</span>
+                        <span style="margin-left: 70px;">{{ product.quantity }}</span>
                     </div>
                     <div class="item">
                         <!-- <p>ภาษี:</p> -->
-                        <span>7%</span>
+                        <span style="margin-left: 80px;">7%</span>
                     </div>
                     <div class="item">
-                        <span>{{ calculateLinePrice(product).toFixed(2) }} บาท</span>
+                        <span style="margin-left: 40px;">{{ calculateLinePrice(product).toFixed(2) }} บาท</span>
                     </div>
                 </div>
             </div>
@@ -124,6 +125,7 @@
         </div>
 
     </div>
+    <footerComponent></footerComponent>
 </template>
 
 <script>
@@ -147,7 +149,9 @@ export default {
         },
         // Calculate the total after tax
         totalWithTax() {
-            return this.totalAmount + this.totalTax;
+            const totalWithVAT = this.totalAmount + this.totalTax;
+            return Math.round(totalWithVAT);
+
         }
     },
     data() {
@@ -159,11 +163,13 @@ export default {
             sellerfilter: [],
             shopIds: [],
             addressname: "",
+            addressnumber: "",
             addressdistrict: "",
             addresspostalCode: "",
             addressprovince: "",
             addressaddress: "",
             paymentfilter: [],
+            selelrEmail: ""
 
         }
     },
@@ -179,7 +185,7 @@ export default {
         setTimeout(() => {
             this.clearCart()
             this.$router.push('/users/PurchaseHistory');
-        }, 15000);
+        }, 10000);
     },
     methods: {
         calculateLinePrice(product) {
@@ -217,8 +223,8 @@ export default {
                 const Adress = Array.isArray(response.data) ? response.data : [response.data];
                 this.Orderfilter = Adress.filter(entry => entry.email === userEmail);
                 this.shopIds = this.Orderfilter.map(entry => entry.shopId);
-                console.log("this.Orderfilter", this.Orderfilter);
-                console.log("this.shopIds", this.shopIds);
+                // console.log("this.Orderfilter", this.Orderfilter);
+                // console.log("this.shopIds", this.shopIds);
 
             } catch (error) {
                 console.error('Error fetching cart items:', error);
@@ -266,14 +272,14 @@ export default {
                 // console.log(userEmail);
 
                 const response = await axios.get('http://localhost:8081/shop/shops');
-                console.log("response", response.data.data);
+                // console.log("response", response.data.data);
 
                 const Adress = response.data.data;
                 // console.log("Adress", Adress);
                 // console.log("this.shopIds",this.shopIds);
 
                 this.shopfilter = Adress.filter(entry => this.shopIds.includes(entry.shopId));
-                console.log("this.shopfilter", this.shopfilter);
+                // console.log("this.shopfilter", this.shopfilter);
 
 
             } catch (error) {
@@ -317,15 +323,20 @@ export default {
                     throw new Error('User email not found');
                 }
                 // console.log(userEmail);
-
                 const response = await axios.get('http://localhost:8081/selling/view-data');
-                // console.log("response", response);
+                console.log("response", response);
 
                 const Adress = Array.isArray(response.data.data) ? response.data.data : [response.data.data];
-                // console.log("Adress",Adress);
-
-                this.sellerfilter = Adress.filter(entry => entry.sellerEmail === userEmail);
-                // console.log("Adress",this.sellerfilter);
+                console.log("this.shopfilter", this.shopfilter);
+                // this.sellerfilter = Adress.filter(entry => this.shopfilter.email.includes(entry.email));
+                if (this.shopfilter && this.shopfilter.length > 0) {
+                    const shopEmails = this.shopfilter.map(shop => shop.email); // ดึง email จากทุกอ็อบเจกต์ใน this.shopfilter
+                    this.sellerfilter = Adress.filter(entry => shopEmails.includes(entry.email));
+                } else {
+                    console.error('this.shopfilter ไม่มีข้อมูลที่ต้องการ');
+                    this.sellerfilter = [];
+                }
+                console.log("sellerfilter", this.sellerfilter);
             } catch (error) {
                 console.error('Error fetching cart items:', error);
             }
@@ -344,7 +355,6 @@ export default {
                         this.addressprovince = addressData.province;
                         this.addressaddress = addressData.address;
                         this.addressnumber = addressData.number;
-
                     }
                     // console.log("this.Adressfilter", this.Adressfilter);
                 })
@@ -383,7 +393,7 @@ export default {
 
 <style scoped>
 .receipt {
-    width: 80%;
+    width: 75%;
     margin: auto;
     padding: 40px 50px;
     border: 1px solid #ddd;

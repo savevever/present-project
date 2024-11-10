@@ -34,6 +34,7 @@ const Product = sequelize.define('Product', {
     year: { type: DataTypes.INTEGER, allowNull: false }
 });
 
+
 const Selling = sequelize.define('Selling', {
     id: { type: DataTypes.INTEGER, allowNull: false, primaryKey: true, autoIncrement: true },
     shopName: { type: DataTypes.STRING, allowNull: true },

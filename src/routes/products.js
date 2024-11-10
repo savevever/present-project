@@ -361,7 +361,15 @@ router.delete('/delHistorySellrt/:Historyid', async (req, res) => {
         res.status(500).send('Error deleting history entry.');
     }
 });
-
+router.delete('/delHistorySellr', async (req, res) => {
+    try {
+        await historySeller.destroy({ where: {} });
+        res.status(200).send('All cart entries have been deleted.');
+    } catch (error) {
+        console.error('Error deleting cart entries:', error);
+        res.status(500).send('Error deleting cart entries');
+    }
+});
 router.delete('/delCart/:productId', async (req, res) => {
     const { productId } = req.params;
     try {

@@ -37,7 +37,7 @@
 
 
 <script>
-// import axios from "axios";
+import axios from "axios";
 
 export default {
     data() {
@@ -50,12 +50,11 @@ export default {
             phoneError: false,
             form1Error: false,
             shopNameError: false,
-            shopName: ''
+            shopName: '' 
         };
     },
     created() {
         this.getUserName();
-        this.loadFormData();
     },
     methods: {
         getUserName() {
@@ -65,23 +64,6 @@ export default {
                 this.user.email = user.email;
                 this.userId = user.id;
             }
-        },
-        loadFormData() {
-            // ดึงข้อมูลฟอร์มจาก localStorage ถ้ามี
-            const savedFormData = JSON.parse(localStorage.getItem('shopData'));
-            if (savedFormData) {
-                this.user.name = savedFormData.shopName || this.user.name;
-                this.phoneNumber = savedFormData.phoneNumber || '';
-            }
-        },
-        saveFormData() {
-            // บันทึกข้อมูลฟอร์มลงใน localStorage
-            const shopData = {
-                shopName: this.user.name,
-                email: this.user.email,
-                phoneNumber: this.phoneNumber
-            };
-            localStorage.setItem('shopData', JSON.stringify(shopData));
         },
         validatePhoneNumber() {
             if (
@@ -157,12 +139,29 @@ export default {
                 }
             }
         },
+        getFormOneData() {
+            const data1 = {
+                shopName: this.user.name,
+                email: this.user.email,
+                phoneNumber: this.phoneNumber
+            };
+
+            axios.post('http://localhost:8081/shop/register-shop', data1)
+                .then(response => {
+                    console.log(response.data);
+                    this.shopId = response.data.data.shopId; 
+                    this.shopName = response.data.data.shopName;
+                })
+                .catch(error => {
+                    console.error('Error saving data:', error);
+                });
+        },
         redirectToFormTwoSeller() {
             if (this.validateForm1()) {
-                this.saveFormData();
-                this.$router.push({
-                    path: "/selling/FormTwoSeller"
-                });
+                //this.saveDataJson();
+                this.getFormOneData();
+                console.log(this.validateForm1());
+                this.$router.push("/selling/FormTwoSeller");
             }
         }
     }
@@ -170,12 +169,6 @@ export default {
 </script>
 
 <style scoped>
-* {
-    font-family: "Noto Sans Thai", sans-serif;
-    font-weight: 500;
-    font-style: normal;
-}
-
 #menu-form {
     padding: 15px;
     list-style-type: none;
@@ -186,7 +179,7 @@ export default {
 }
 
 .form1 {
-    color: rgb(255, 107, 107);
+    color: red;
 }
 
 .red-text {
@@ -206,7 +199,7 @@ export default {
 }
 
 #email {
-    font-size: 15px;
+    font-size: 20px;
 }
 
 .formbox {
@@ -257,6 +250,7 @@ export default {
 }
 
 .section {
+    font-family: "Times New Roman", Times, serif;
     font-size: 15px;
     margin-bottom: 10px;
 }
@@ -269,9 +263,7 @@ export default {
     border: 1px solid red;
 }
 
-.error-message,
-#phone-error {
-    font-size: 14px;
+.error-message {
     color: red;
 }
 </style>

@@ -34,12 +34,12 @@ const createJWT = (header, payload, secret) => {
     return jwtToken;
 };
 // สร้าง Payment Token โดยการส่งคำร้องไปยัง 2C2P API
-const createPaymentToken = async (amount,userDefined1,invoiceNo) => {
+const createPaymentToken = async (amount) => {
     const header = {
         alg: "HS256",
         typ: "JWT"
     };
-    // const invoiceNo = crypto.randomUUID();
+    const invoiceNo = crypto.randomUUID();
 
     const payloadData = {
         iss: "Online JWT Builder",
@@ -51,13 +51,12 @@ const createPaymentToken = async (amount,userDefined1,invoiceNo) => {
         invoiceNo: invoiceNo,
         description: "test",
         amount: amount,
-        userDefined1: userDefined1,
+        userDefined1: "dddd",
         currencyCode: "THB",
         frontendReturnUrl: `${process.env.VUE_APP_NGROK_URL}receiptComponent`,
         backendReturnUrl: `${process.env.VUE_APP_NGROK_URL}2c2p/callback`,
         
     };
-    console.log("userDefined1:", userDefined1);
     const token = createJWT(header, payloadData, secretKey);
     try {
         const response = await axios.post('https://sandbox-pgw.2c2p.com/payment/4.3/paymentToken', {
@@ -145,8 +144,8 @@ router.get('/', (req, res) => {
 });
 router.post('/paymentToken', async (req, res) => {
     try {
-        const { amount, invoiceNo,userDefined1  } = req.body;
-        const paymentResponse = await createPaymentToken(amount, invoiceNo,userDefined1 );
+        const { amount, invoiceNo,  } = req.body;
+        const paymentResponse = await createPaymentToken(amount, invoiceNo, );
         console.log('Received payment response:', paymentResponse);
         res.status(200).json({ payload: paymentResponse });
     } catch (err) {

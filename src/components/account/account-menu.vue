@@ -23,11 +23,11 @@
                 <p v-show="isVisible"><router-link to="/users/setting" class="custom-link">ตั้งค่าบัญชี</router-link>
                 </p>
             </div>
-            <div class="item">
+            <!-- <div class="item">
                 <font-awesome-icon :icon="['fas', 'gear']"  class="icons" v-show="isVisible"/>
                 <p v-show="isVisible"><router-link to="/historyBill" class="custom-link">ดูประวัติใบเสร็จชำระเงิน</router-link>
                 </p>
-            </div>
+            </div> -->
            
             
         </div>
@@ -38,7 +38,7 @@
             </div>
             <div class="item">
                 <font-awesome-icon :icon="['fas', 'chart-line']"  class="icons" v-show="isVisible2"/>
-                <p v-show="isVisible2"><router-link to="/OrderHistory" class="custom-link">ประวัติการเดินรายการ</router-link></p>
+                <p v-show="isVisible2"><router-link to="/OrderHistory" class="custom-link">ประวัติสินค้าที่ถูกซื้อ</router-link></p>
             </div>
             <div class="item">
                 <font-awesome-icon :icon="['fas', 'chart-line']"  class="icons" v-show="isVisible2"/>

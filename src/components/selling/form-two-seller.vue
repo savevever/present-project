@@ -346,7 +346,7 @@ export default {
             pairIdCardImages: [],
             companyCertificateImages: [],
             directorIdCardImages: [],
-            shopData: {
+            data1: {
                 shopName: "",
                 email: "",
                 phoneNumber: "",
@@ -372,14 +372,14 @@ export default {
         }
     },
     created() {
-        const savedShopData = localStorage.getItem("shopData");
-        if (savedShopData) {
-            this.shopData = JSON.parse(savedShopData);
+        const savedData1 = localStorage.getItem("data1");
+        if (savedData1) {
+            this.data1 = JSON.parse(savedData1);
         } else {
             console.warn(
                 "No shop data found in localStorage, initializing with default data."
             );
-            this.shopData = { name: "Default Shop", items: [] }; // Example default data
+            this.data1 = { name: "Default Shop", items: [] }; // Example default data
         }
     },
     methods: {
@@ -487,7 +487,10 @@ export default {
                     this.idCardNumberError = false;
                 }
 
-                if (!this.birthDay || new Date().getFullYear() - new Date(this.birthDay).getFullYear() < 20) {
+                if (
+                    !this.birthDay ||
+                    new Date().getFullYear() - new Date(this.birthDay).getFullYear() < 20
+                ) {
                     isValid = false;
                     this.ageError = true;
                     this.$refs.birthDay.style.border = "1px solid red"; // ทำให้ขอบวันเกิดเป็นสีแดงเมื่ออายุไม่ถึง 20 ปี
@@ -717,9 +720,9 @@ export default {
         },
         saveData() {
             const data = {
-                shopName: this.shopData.shopName,
-                email: this.shopData.email,
-                phoneNumber: this.shopData.phoneNumber,
+                shopName: this.data1.shopName,
+                email: this.data1.email,
+                phoneNumber: this.data1.phoneNumber,
                 sellerType: this.sellerType,
                 prefix: this.prefix,
                 otherPrefix: this.otherPrefix,
@@ -1032,6 +1035,6 @@ input[type="checkbox"] {
 
 .upload-container.dragging {
     background-color: #e8d6f6;
-    border: 2px dashed #9B7EBD;
+    border: 2px dashed #9b7ebd;
 }
 </style>
